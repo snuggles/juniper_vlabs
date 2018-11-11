@@ -1,0 +1,5 @@
+---
+  - name: building logical-systems configuration
+    template: 
+      src: "logical_systems.j2"
+      dest: "{{ build_directory }}/02_logical_systems.conf.part"

@@ -1,0 +1,254 @@
+{# ROUTING-INSTANCES #}
+{% if routing_instance is defined %}
+routing-instances {
+{% for instance in routing_instance %}
+    {{ instance.name }} {
+        instance-type {{ instance.instance_type }};
+{% for interface in instance.interfaces %}
+        interface {{ interface }};
+{% endfor %}
+{% if instance.route_distinguisher is defined %}
+        route-distinguisher 192.168.255.1:1;
+{% endif %}
+{% if instance.vrf_target is defined %}
+        vrf-target target:65000:1;
+{% endif %}
+{% if instance.routing_options is defined %}
+        routing-options {
+{% for option in instance.routing_options %}
+            {{ option }};
+{% endfor %}
+        }
+{% endif %}
+{% if instance.forwarding_options is defined %}
+        forwarding-options {
+{% for option in instance.forwarding_options %}
+            {{ option.name }} {
+{% if option.serverGroup is defined %}
+                server-group {
+{% for serverGroup in option.serverGroup %}
+                    {{ serverGroup.name }} {
+{% for server in serverGroup.ipv4_address %}
+                        {{ server }};
+{% endfor %}
+{% endfor %}
+                    }
+                }
+{% endif %}
+{% if option.group is defined %}
+{% for group in option.group %}
+                group {{ group.name }} {
+                    active-server-group {{ group.activeServerGroup }};
+{% if group.interface is defined %}
+{% for interface in group.interface %}
+                    interface {{ interface }};
+{% endfor %}
+{% endif %}
+                }
+{% endfor %}
+{% endif %}
+            }
+{% endfor %}
+        }
+{% endif %}
+{# PROTOCOLS #}
+{% if instance.protocols is defined %}
+        protocols {
+{# LLDP #}
+{% if instance.protocols.lldp is defined %}
+            lldp {
+{% if instance.protocols.lldp.options is defined %}
+{% for option in instance.protocols.lldp.options %}
+                {{ option }};
+{% endfor %}
+{% endif %}
+{% if instance.protocols.lldp.interface is defined %}
+{% for interface in instance.protocols.lldp.interface %}
+                interface {{ interface }};
+{% endfor %}
+{% endif %}
+            }
+{% endif %}
+{# OSPF #}
+{% if instance.protocols.ospf is defined %}
+            ospf {
+{% if instance.protocols.ospf.options is defined %}
+{% for option in instance.protocols.ospf.options %}
+                {{ option }};
+{% endfor %}
+{% if instance.protocols.ospf.traffic_engineering is defined %}
+                traffic-engineering;
+{% endif %}
+{% endif %}
+{% if instance.protocols.ospf.export is defined %}
+                export {{ instance.protocols.ospf.export }};
+{% endif %}
+{% for area in instance.protocols.ospf.area %}
+                area {{ area.id }} {
+{% for interface in area.interface %}
+{% if interface.type is defined %}
+                    interface {{ interface.iface }} {
+                        interface-type {{ interface.type }};
+{% if interface.type == 'p2mp' %}
+                        dynamic-neighbors;
+{% endif %}
+                    }
+{% elif interface.passive is defined %}
+                    interface {{ interface.iface }} {
+                        passive;
+                    }
+{% else %}
+                interface {{ interface.iface }};
+{% endif %}
+{% endfor %}
+                }
+{% endfor %}
+            }
+{% endif %}
+{# _VPLS CONFIGURATION_ #}
+{% if instance.protocols.vpls is defined %}
+            vpls {
+                site-range {{ instance.protocols.vpls.site_range }};
+                no-tunnel-services;
+                site {{ instance.protocols.vpls.site }} {
+                        {{ instance.protocols.vpls.id }};
+                }
+            }
+{% endif %}
+{# _MPLS CONFIGURATION_ #}
+{% if instance.protocols.mpls is defined %}
+        mpls {
+{% if instance.protocols.mpls.options is defined %}
+{% if instance.protocols.mpls.options.path_mtu is defined %}
+            path-mtu {
+                rsvp mtu-signaling;
+            }
+{% endif %}
+{% if instance.protocols.mpls.options.no_cspf == 'True' %}
+            no-cspf;
+{% endif %}
+{% endif %}
+{% if instance.protocols.mpls.label_switched_paths is defined %}
+{% for lsp in instance.protocols.mpls.label_switched_paths %}
+            label-switched-path {{ lsp.name }} {
+                to {{ lsp.destination }};
+{% if lsp.bandwidth is defined %}
+                bandwidth {{ lsp.bandwidth }};
+{% endif %}
+{% if lsp.no_cspf == 'True' %}
+                no-cspf;
+{% endif %}
+{% if lsp.path is defined %}
+                primary {{ lsp.path.primary }};
+{% if lsp.path.secondary is defined %}
+                secondary {{ lsp.path.secondary }};
+{% endif %}
+{% endif %}
+            }
+{% endfor %}
+{% endif %}
+{% if instance.protocols.mpls.path is defined %}
+{% for path in instance.protocols.mpls.path %}
+            path {{ path.name }} {
+{% for hop in path.hops %}
+                {{ hop.loopback }} {{ hop.rule }};
+{% endfor %}
+            }
+{% endfor %}
+{% endif %}
+{% for interface in instance.protocols.mpls.interface %}
+            interface {{ interface.iface }};
+{% endfor %}
+        }
+{% endif %}
+{# _RSVP CONFIGURATION_ #}
+{% if instance.protocols.rsvp is defined %}
+        rsvp {
+{% for interface in instance.protocols.rsvp.interface %}
+            interface {{ interface.iface }};
+{% endfor %}
+        }
+{% endif %}
+{# _BGP CONFIGURATION_ #}
+{% if instance.protocols.bgp is defined %}
+        bgp {
+{% if instance.protocols.bgp.group is defined %}
+{% for group in instance.protocols.bgp.group %}
+            group {{ group.name }} {
+                type {{ group.type }};
+{% if group.export is defined %}
+                export {{ group.export }};
+{% endif %}
+{% for neighbor in group.neighbor %}
+                neighbor {{ neighbor.ip_address }} {
+                    hold-time {{ neighbor.hold_time }};
+                    export {{ neighbor.export }};
+                    peer-as {{ neighbor.peer_as }};
+                    local-as {{ neighbor.local_as }};
+                }
+{% endfor %}
+            }
+{% endfor %}
+{% endif %}
+        }
+{% endif %}
+{# _SPANNING-TREE-PROTOCOL_ #}
+{% if instance.protocols.spanning_tree is defined %}
+{% for stp in instance.protocols.spanning_tree %}
+        {{ stp.protocol }} {
+{# MSTP CONFIGUATION #}
+{% if stp.protocol == 'mstp' %}
+            configuration-name {{ stp.name }};
+            revision-level {{ stp.revision }};
+            bridge-priority {{ stp.bridge_priority }};
+            forward-delay {{ stp.forward_delay }};
+            max-age {{ stp.age }};
+            hello-time {{ stp.hello }};
+{% for option in stp.options %}
+            {{ option }};
+{% endfor %}
+{% for iface in stp.interfaces %}
+            interface {{ iface.iface }} {
+{% if iface.mode is defined %}
+                mode {{ iface.mode }};
+{% endif %}
+{% if iface.disable == True %}
+                disable;
+{% endif %}
+{% if iface.no_root_port == True %}
+                no-root-port;
+{% endif %}
+{% if iface.edge == True %}
+                edge;
+{% endif %}
+{% if iface.access_trunk == True %}
+                access-trunk;
+{% endif %}
+            }
+{% endfor %}
+{% for instance in stp.msti %}
+            msti {{ instance.instance }} {
+{% if instance.priority is defined %}
+                bridge-priority {{ instance.priority }};
+{% endif %}
+                vlan {{ instance.vlans }};
+{% for interface in instance.interfaces %}
+                interface {{ interface.iface }} {
+                    priority {{ interface.priority }};
+                    cost {{ interface.cost }};
+                }
+{% endfor %}
+            }
+{% endfor %}
+{% elif stp.protocol == 'rstp' %}
+{% elif stp.protocol == 'vstp' %}
+{% endif %}
+        }
+{% endfor %}
+{% endif %}
+        }
+    }
+{% endif %}
+{% endfor %}
+}
+{% endif %}

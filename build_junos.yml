@@ -1,0 +1,22 @@
+---
+  - name: '### BUILD THE CONFIGURATION PIECE-BY-PIECE ###'
+    hosts: all
+    connection: local
+    gather_facts: false
+    roles:
+      - junos_system
+      - junos_chassis
+      - junos_interfaces
+      - junos_bridge_domains
+      - junos_protocols
+      - junos_policy_options
+      - junos_forwarding_options
+      - junos_logical_systems
+      # - junos_applications
+      # - junos_access
+      - junos_routing_options
+      - junos_routing_instances
+      # - junos_security
+      - junos_snmp
+      - junos_virtual_chassis
+      - build_config

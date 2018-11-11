@@ -1,0 +1,56 @@
+system:
+  domain_name: packetferret.io
+  domain_search: packetferret.io
+  time_zone: America/Chicago
+  arp_aging_timer: 5
+  auth_order: 'password'
+  root_encrypted_password: '$5$AXpsXiSr$J9S.i.up6XjFsVGAIgWtp5xJmMsWHtUF.6K5cMEAi19'
+  name_server:
+    - 1.1.1.1
+    - 8.8.8.8
+#  radius_server:
+#    - ip_address: 10.30.1.1
+#      secret: '_INSERT-ENCRYPTED-RADIUS-PASS-HERE_'
+#  accounting:
+#    events: '[ change-log interactive-commands ]'
+#    destination:
+#      - type: radius
+#        server: 10.30.1.1
+#        secret: '_INSERT-ENCRYPTED-RADIUS-PASS-HERE_'
+  login:
+    message: '==== Welcome to Juniper vLabs ===='
+    class:
+      - name: SUPER_USER
+        idleTimeout: 0
+        permissions: all
+    user:
+      - name: ansible
+        uid: 2101
+        encryptPass: '$5$W9klZ.yt$L19UjdXNi3dRJbTUtCM99qSf2BIOcQzplAnFY6YNWkA'
+        permissions: SUPER_USER
+  passwordRequirements: minimum-length 8
+  services:
+    ftp: True
+    ssh:
+      - max-sessions-per-connection 4
+    netconf: True
+    rest:
+      http:
+        port: 8080
+      options:
+        - enable-explorer
+    # dhcp:
+    #   group:
+    #     name: TRUSTED
+    #     iface: xe-0/0/2.0
+  ntp:
+    bootserver: 10.30.1.1
+    server:
+      - ipv4_address: 10.30.1.1
+      - ipv4_address: 10.30.1.2
+
+temporary_directory: /tmp/ansible/
+build_directory: "{{ temporary_directory }}/{{ inventory_hostname }}/tmp"
+configuration_directory: config
+configuration_file: "{{ inventory_hostname }}.conf"
+configuration: "{{ configuration_directory }}/{{ configuration_file }}"

@@ -1,0 +1,43 @@
+{# ACCESS #}
+{% if access is defined %}
+access {
+{% if access.inactive == True %}
+    inactive: address-assignment {
+{% else %}
+    address-assignment {
+{% endif %}
+{% for pool in access.pool %}
+        pool {{ pool.name }} {
+            family inet {
+                network {{ pool.network }};
+                range {{ pool.range.name }} {
+                    low {{ pool.range.low }};
+                    high {{ pool.range.high }};
+                }
+                dhcp-attributes {
+                    name-server {
+{% for nameserver in pool.nameserver %}
+                        {{ nameserver }};
+{% endfor %}
+                    }
+                    router {
+                        {{ pool.router }};
+                    }
+{% if pool.domain_name is defined %}
+                    domain-name {{ pool.domain_name }};
+{% endif %}
+                }
+{% if pool.hosts is defined %}
+{% for host in pool.hosts %}
+                host {{ host.name }} {
+                    hardware-address {{ host.hw }};
+                    ip-address {{ host.ip }};
+                }
+{% endfor %}
+{% endif %}
+            }
+        }
+{% endfor %}
+    }
+}
+{% endif %}

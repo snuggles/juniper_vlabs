@@ -1,0 +1,60 @@
+interfaces:
+  physical_single:
+    - name: xe-0/0/0
+      description: vmx2_xe-0/0/0
+      subinterface:
+        - unit: 0
+          family:
+            - mode: inet
+              address: 10.1.2.2/24
+            - mode: mpls
+    - name: xe-0/0/1
+      description: vmx3_xe-0/0/1
+      subinterface:
+        - unit: 0
+          family:
+            - mode: inet
+              address: 10.2.3.2/24
+            - mode: mpls
+    - name: xe-0/0/2
+      description: vmx4_xe-0/0/2
+      subinterface:
+        - unit: 0
+          family:
+            - mode: inet
+              address: 10.2.4.2/24
+            - mode: mpls
+    - name: xe-0/0/3
+      description: vmx6_xe-0/0/3
+      subinterface:
+        - unit: 0
+          family:
+            - mode: inet
+              address: 10.2.6.2/24
+            - mode: mpls
+    - name: lt-0/0/0
+      subinterface:
+        - unit: 0
+          # description: PE_TO_CE
+          encapsulation: "vlan-vpls"
+          peer_unit: 1
+          family:
+            - mode: vpls
+              vlan: 5
+    - name: fxp0
+      description: mgmt
+      subinterface:
+        - unit: 0
+          family:
+            - mode: inet
+              address: "{{ ansible_host }}{{ mgmt_mask }}"
+
+# END OF PHYSICAL INTERFACES #
+# START OF VIRTUAL INTERFACES #
+    - name: lo0
+      description: loopback0
+      subinterface:
+        - unit: 0
+          family:
+            - mode: inet
+              address: "{{ lo0 }}/32"

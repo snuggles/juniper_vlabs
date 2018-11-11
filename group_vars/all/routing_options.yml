@@ -1,0 +1,12 @@
+routing_options:
+  nonstop_routing: False
+  router_id: "{{ lo0 }}"
+  autonomous_system: '100.0'
+  static:
+    - "0.0.0.0/0 next-hop {{ mgmt_gateway }}"
+  rsvp_dynamic_tunnnels:
+    - name: juniper_vlabs
+      term: 
+        - id: 10
+          lsp_template: default-template
+          destination_networks: 192.168.255.0/24

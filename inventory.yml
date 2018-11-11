@@ -1,0 +1,29 @@
+---
+  all:
+    vars:
+        vendor: juniper
+        mgmt_mask: "/17"
+        mgmt_gateway: "10.255.0.1"
+    children:
+      routers:
+        hosts:
+          vmx1:
+            ansible_host: 10.255.9.1
+            lo0: 192.168.255.1
+          vmx2:
+            ansible_host: 10.255.9.2
+            lo0: 192.168.255.2
+          vmx3:
+            ansible_host: 10.255.9.3
+            lo0: 192.168.255.3
+          # vmx4:
+          #   ansible_host: 10.255.9.4
+          #   lo0: 192.168.255.4
+          # vmx5:
+          #   ansible_host: 10.255.9.5
+          #   lo0: 192.168.255.5
+          # vmx6:
+          #   ansible_host: 10.255.9.6
+          #   lo0: 192.168.255.6
+        vars:
+          mgmt_interface: fxp0.0

@@ -1,0 +1,104 @@
+logical_systems:
+  - name: CE2
+    interfaces: 
+      - name: "lt-0/0/0"
+        subinterface:
+          - unit: 1
+            description: "CE2-PE2 connection"
+            encapsulation: "vlan"
+            peer_unit: 0
+            vlan: 5
+            family:
+              - mode: inet
+                address: "10.100.0.2/24"
+      - name: "lo0"
+        subinterface:
+          - unit: 1
+            family:
+              - mode: inet
+                address: "192.168.1.2/32"
+    protocols:
+      ospf:
+        export: redistribute_lo0.1
+        area:
+          - id: 0.0.0.0
+            interface:
+              - iface: lt-0/0/0.1
+                type: p2mp
+              - iface: lo0.0
+                passive: True
+      # mpls:
+      #   options:
+      #     path_mtu: True
+      #     no_cspf: False
+      #   label_switched_paths: 
+      #     - name: mx1_to_mx6
+      #       destination: 192.168.255.6
+      #       bandwidth: 35m
+      #       no_cspf: False
+      #       path: 
+      #         primary: mx1_mx2_mx6
+      #   path:
+      #     - name: mx1_mx2_mx6
+      #       hops:
+      #         - loopback: 192.168.255.2 
+      #           rule: loose
+      #         - loopback: 192.168.255.4 
+      #           rule: strict
+      #   interface: 
+      #     - iface: xe-0/0/0.0
+      #     - iface: xe-0/0/1.0
+      #     - iface: xe-0/0/2.0
+      #     - iface: xe-0/0/3.0
+      #     - iface: lo0.0
+      # rsvp:
+      #   # options:
+      #   #   - 
+      #   interface: 
+      #     - iface: xe-0/0/0.0
+      #     - iface: xe-0/0/1.0
+      #     - iface: xe-0/0/2.0
+      #     - iface: xe-0/0/3.0
+      # bgp:
+      #   group:
+      #     - name: vLabs_iBGP
+      #       type: internal
+      #       neighbor:
+      #         - ip_address: 192.168.255.1
+      #           hold_time: 30
+      #           # export: POLICY_EXPORT_LOCAL_INTERFACES
+      #           peer_as: 100.0
+      #           local_as: 100.0
+      #         - ip_address: 192.168.255.2
+      #           hold_time: 30
+      #           # export: POLICY_EXPORT_LOCAL_INTERFACES
+      #           peer_as: 100.0
+      #           local_as: 100.0
+      #         - ip_address: 192.168.255.3
+      #           hold_time: 30
+      #           # export: POLICY_EXPORT_LOCAL_INTERFACES
+      #           peer_as: 100.0
+      #           local_as: 100.0
+      #         - ip_address: 192.168.255.4
+      #           hold_time: 30
+      #           # export: POLICY_EXPORT_LOCAL_INTERFACES
+      #           peer_as: 100.0
+      #           local_as: 100.0
+      #         - ip_address: 192.168.255.5
+      #           hold_time: 30
+      #           # export: POLICY_EXPORT_LOCAL_INTERFACES
+      #           peer_as: 100.0
+      #           local_as: 100.0
+      #         - ip_address: 192.168.255.6
+      #           hold_time: 30
+      #           # export: POLICY_EXPORT_LOCAL_INTERFACES
+      #           peer_as: 100.0
+      #           local_as: 100.0
+    policy_options:
+      policy:
+        - name: redistribute_lo0.1
+          term:
+            - number: 10
+              from:
+                - interface lo0.1
+              then: accept

@@ -1,0 +1,274 @@
+{# LOGICAL-SYSTEMS #}
+{% if logical_systems is defined %}
+chassis {
+    fpc 0 {
+        pic 0 {
+            tunnel-services {
+                bandwidth 10g;
+            }
+        }
+    }
+}
+logical-systems {
+{% for logical_system in logical_systems %}
+    {{ logical_system.name }} {
+{# INTERFACES #}
+{% if logical_system.interfaces is defined %}
+        interfaces {
+{% for iface in logical_system.interfaces %}
+            {{ iface.name }} {
+{% if iface.description is defined %}
+                description {{ iface.description }};
+{% endif %}
+{% if iface.mtu is defined %}
+                mtu {{ iface.mtu }}
+{% endif %}
+{% if iface.subinterface is defined %}
+{% for subinterface in iface.subinterface %}
+                unit {{ subinterface.unit }} {
+{% if subinterface.encapsulation is defined %}
+                    encapsulation {{ subinterface.encapsulation }};
+{% endif %}
+{% if subinterface.peer_unit is defined %}
+                    peer-unit {{ subinterface.peer_unit }};
+{% endif %}
+{% if subinterface.vlan is defined %}
+                    vlan-id {{ subinterface.vlan }};
+{% endif %}
+{% for family in subinterface.family %}
+{% if family.mode == 'inet' %}
+                    family {{ family.mode }} {
+{% if family.address == 'dhcp' %}
+                        dhcp;
+{% else %}
+                        address {{ family.address }};
+                    }
+{% endif %}
+{% elif family.mode == 'mpls' %}
+                    family {{ family.mode }};
+{% endif %}
+{% endfor %}
+                }
+{% endfor %}
+{% endif %}
+            }
+{% endfor %}
+{% endif %}
+        }
+{# PROTOCOLS #}
+{% if logical_system.protocols is defined %}
+        protocols {
+{# LLDP #}
+{% if logical_system.protocols.lldp is defined %}
+            lldp {
+{% if logical_system.protocols.lldp.options is defined %}
+{% for option in logical_system.protocols.lldp.options %}
+                {{ option }};
+{% endfor %}
+{% endif %}
+{% if logical_system.protocols.lldp.interface is defined %}
+{% for interface in logical_system.protocols.lldp.interface %}
+                interface {{ interface }};
+{% endfor %}
+{% endif %}
+            }
+{% endif %}
+{# OSPF #}
+{% if logical_system.protocols.ospf is defined %}
+            ospf {
+{% if logical_system.protocols.ospf.options is defined %}
+{% for option in logical_system.protocols.ospf.options %}
+                {{ option }};
+{% endfor %}
+{% endif %}
+{% if logical_system.protocols.ospf.export is defined %}
+                export {{ logical_system.protocols.ospf.export }};
+{% endif %}
+{% for area in logical_system.protocols.ospf.area %}
+                area {{ area.id }} {
+{% for interface in area.interface %}
+{% if interface.type is defined %}
+                    interface {{ interface.iface }} {
+                        interface-type {{ interface.type }};
+{% if interface.type == 'p2mp' %}
+                        dynamic-neighbors;
+{% endif %}
+                    }
+{% elif interface.passive is defined %}
+                    interface {{ interface.iface }} {
+                        passive;
+                    }
+{% else %}
+                    interface {{ interface.iface }};
+{% endif %}
+{% endfor %}
+                }
+{% endfor %}
+            }
+{% endif %}
+{# _MPLS CONFIGURATION_ #}
+{% if logical_system.protocols.mpls is defined %}
+            mpls {
+{% if logical_system.protocols.mpls.options is defined %}
+{% if logical_system.protocols.mpls.options.path_mtu is defined %}
+                path-mtu {
+                    rsvp mtu-signaling;
+                }
+{% endif %}
+{% if logical_system.protocols.mpls.options.no_cspf == 'True' %}
+                no-cspf;
+{% endif %}
+{% endif %}
+{% if logical_system.protocols.mpls.label_switched_paths is defined %}
+{% for lsp in logical_system.protocols.mpls.label_switched_paths %}
+                label-switched-path {{ lsp.name }} {
+                    to {{ lsp.destination }};
+{% if lsp.bandwidth is defined %}
+                    bandwidth {{ lsp.bandwidth }};
+{% endif %}
+{% if lsp.no_cspf == 'True' %}
+                    no-cspf;
+{% endif %}
+{% if lsp.path is defined %}
+                    primary {{ lsp.path.primary }};
+{% if lsp.path.secondary is defined %}
+                    secondary {{ lsp.path.secondary }};
+{% endif %}
+{% endif %}
+                }
+{% endfor %}
+{% endif %}
+{% if logical_system.protocols.mpls.path is defined %}
+{% for path in logical_system.protocols.mpls.path %}
+                path {{ path.name }} {
+{% for hop in path.hops %}
+                    {{ hop.loopback }} {{ hop.rule }};
+{% endfor %}
+                }
+{% endfor %}
+{% endif %}
+{% for interface in logical_system.protocols.mpls.interface %}
+                interface {{ interface.iface }};
+{% endfor %}
+            }
+{% endif %}
+{# _RSVP CONFIGURATION_ #}
+{% if logical_system.protocols.rsvp is defined %}
+            rsvp {
+{% for interface in logical_system.protocols.rsvp.interface %}
+                interface {{ interface.iface }};
+{% endfor %}
+            }
+{% endif %}
+{# _BGP CONFIGURATION_ #}
+{% if logical_system.protocols.bgp is defined %}
+            bgp {
+{% if logical_system.protocols.bgp.group is defined %}
+{% for group in logical_system.protocols.bgp.group %}
+                group {{ group.name }} {
+                    type {{ group.type }};
+{% if group.export is defined %}
+                    export {{ group.export }};
+{% endif %}
+{% for neighbor in group.neighbor %}
+                    neighbor {{ neighbor.ip_address }} {
+                        hold-time {{ neighbor.hold_time }};
+                        export {{ neighbor.export }};
+                        peer-as {{ neighbor.peer_as }};
+                        local-as {{ neighbor.local_as }};
+                    }
+{% endfor %}
+                }
+{% endfor %}
+{% endif %}
+            }
+{% endif %}
+{# _SPANNING-TREE-PROTOCOL_ #}
+{% if logical_system.protocols.spanning_tree is defined %}
+{% for stp in logical_system.protocols.spanning_tree %}
+            {{ stp.protocol }} {
+{# MSTP CONFIGUATION #}
+{% if stp.protocol == 'mstp' %}
+                configuration-name {{ stp.name }};
+                revision-level {{ stp.revision }};
+                bridge-priority {{ stp.bridge_priority }};
+                forward-delay {{ stp.forward_delay }};
+                max-age {{ stp.age }};
+                hello-time {{ stp.hello }};
+{% for option in stp.options %}
+                {{ option }};
+{% endfor %}
+{% for iface in stp.interfaces %}
+                interface {{ iface.iface }} {
+{% if iface.mode is defined %}
+                    mode {{ iface.mode }};
+{% endif %}
+{% if iface.disable == True %}
+                    disable;
+{% endif %}
+{% if iface.no_root_port == True %}
+                    no-root-port;
+{% endif %}
+{% if iface.edge == True %}
+                    edge;
+{% endif %}
+{% if iface.access_trunk == True %}
+                    access-trunk;
+{% endif %}
+                }
+{% endfor %}
+{% for instance in stp.msti %}
+                msti {{ instance.instance }} {
+{% if instance.priority is defined %}
+                    bridge-priority {{ instance.priority }};
+{% endif %}
+                    vlan {{ instance.vlans }};
+{% for interface in instance.interfaces %}
+                    interface {{ interface.iface }} {
+                        priority {{ interface.priority }};
+                        cost {{ interface.cost }};
+                    }
+{% endfor %}
+                }
+{% endfor %}
+{% elif stp.protocol == 'rstp' %}
+{% elif stp.protocol == 'vstp' %}
+{% endif %}
+            }
+{% endfor %}
+{% endif %}
+        }
+{% endif %}
+{% if logical_system.policy_options is defined %}
+        policy-options {
+{% for statement in logical_system.policy_options.policy %}
+            policy-statement {{ statement.name }} {
+{% for term in statement.term %}
+                term {{ term.number }} {
+{% if term.from is defined %}
+                    from {
+{% for match in term.from %}
+                        {{ match }};
+{% endfor %}
+                    }
+{% endif %}
+{% if term.then is defined %}
+                    then {
+                        {{ term.then }};
+                    }
+{% endif %}
+                }
+{% endfor %}
+            }
+{% endfor %}
+{% if logical_system.policy_options.community is defined %}
+{% for community in logical_system.policy_options.community %}
+            community {{ community.name }} members target:{{ community.target }};
+{% endfor %}
+{% endif %}
+        }
+{% endif %}
+    }
+{% endfor %}
+}
+{% endif %}
