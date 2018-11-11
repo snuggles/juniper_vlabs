@@ -5,7 +5,7 @@ protocols:
     interface:
       - all
   ospf:
-    # export: REDISTRIBUTE-DIRECT
+    export: REDISTRIBUTE-DIRECT
     traffic_engineering: True
     area:
       - id: 0.0.0.0
@@ -20,17 +20,17 @@ protocols:
     options:
       path_mtu: True
       no_cspf: True
-    # label_switched_paths: 
+    # label_switched_paths:
     #   - name: mx1_to_mx6
     #     destination: 192.168.255.6
-    interface: 
+    interface:
       - iface: xe-0/0/3.0
       - iface: xe-0/0/4.0
       - iface: lo0.0
   rsvp:
     # options:
-    #   - 
-    interface: 
+    #   -
+    interface:
       - iface: xe-0/0/3.0
       - iface: xe-0/0/4.0
   bgp:
