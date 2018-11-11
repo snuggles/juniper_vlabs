@@ -1,52 +1,52 @@
 routing_instance:
   - name: PE2
     instance_type: vpls
-    interfaces: 
+    interfaces:
       - "lt-0/0/0.0"
     route_distinguisher: "192.168.255.2:1"
     vrf_target: "target:65000:1"
     protocols:
-      # lldp:
-      #   options:
-      #     - port-id-subtype interface-name
-      #   interface:
-      #     - all
-      # ospf:
-      #   export: REDISTRIBUTE-DIRECT
-      #   traffic_engineering: True
-      #   area:
-      #     - id: 0.0.0.0
-      #       interface:
-      #         - iface: lt-0/0/0.0
-      #           type: p2p
+      lldp:
+        options:
+          - port-id-subtype interface-name
+        interface:
+          - all
+      ospf:
+        export: REDISTRIBUTE-DIRECT
+        traffic_engineering: True
+        area:
+          - id: 0.0.0.0
+            interface:
+              - iface: lt-0/0/0.0
+                type: p2p
       vpls:
         site_range: 10
         site: CE2
         id: automatic-site-id
-      # mpls:
-      #   options:
-      #     path_mtu: True
-      #     no_cspf: True
-      #   label_switched_paths: 
-      #     - name: mx1_to_mx6
-      #       destination: 192.168.255.6
-      #   interface: 
-      #     - iface: xe-0/0/3.0
-      #     - iface: xe-0/0/4.0
-      #     - iface: lo0.0
-      # rsvp:
-      #   # options:
-      #   #   - 
-      #   interface: 
-      #     - iface: xe-0/0/3.0
-      #     - iface: xe-0/0/4.0
-      # bgp:
-      #   group:
-      #     - name: vLabs_iBGP
-      #       type: internal
-      #       neighbor:
-      #         - ip_address: 10.100.100.1
-      #           hold_time: 30
-      #           export: POLICY_EXPORT_LOCAL_INTERFACES
-      #           peer_as: 100.0
-      #           local_as: 100.0
+      mpls:
+        options:
+          path_mtu: True
+          no_cspf: True
+        label_switched_paths:
+          - name: mx1_to_mx6
+            destination: 192.168.255.6
+        interface:
+          - iface: xe-0/0/3.0
+          - iface: xe-0/0/4.0
+          - iface: lo0.0
+      rsvp:
+        # options:
+        #   -
+        interface:
+          - iface: xe-0/0/3.0
+          - iface: xe-0/0/4.0
+      bgp:
+        group:
+          - name: vLabs_iBGP
+            type: internal
+            neighbor:
+              - ip_address: 10.100.100.1
+                hold_time: 30
+                export: POLICY_EXPORT_LOCAL_INTERFACES
+                peer_as: 100.0
+                local_as: 100.0
