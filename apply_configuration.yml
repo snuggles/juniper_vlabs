@@ -20,8 +20,9 @@
           state: present
           provider:
             host: "{{ ansible_host }}"
-            username: "packetferret"
-            ssh_keyfile: "/root/.ssh/id_rsa.pub"
+            username: "jcluser"
+            password: "Juniper!1"
+            # ssh_keyfile: "/root/.ssh/id_rsa.pub"
 
       - name: create new user account
         junos_user:
@@ -31,14 +32,15 @@
           state: present
           provider:
             host: "{{ ansible_host }}"
-            username: "packetferret"
-            ssh_keyfile: "/root/.ssh/id_rsa.pub"
+            username: "jcluser"
+            password: "Juniper!1"
+            # ssh_keyfile: "/root/.ssh/id_rsa.pub"
             port: 22
 
       - name: delete default interface configs and protocols stanza
         junos_config:
           lines:
-            - delete protocols 
+            - delete protocols
             - wildcard range delete interfaces xe-0/0/[0-4]
             - delete interfaces lt-0/0/0
             - delete interfaces lo0
@@ -48,7 +50,7 @@
           comment: update config
           provider:
             host: "{{ ansible_host }}"
-            username: "packetferret"
+            username: "ansible"
             ssh_keyfile: "/root/.ssh/id_rsa.pub"
             port: 22
 
@@ -61,7 +63,7 @@
           src: "{{ configuration }}"
           provider:
             host: "{{ ansible_host }}"
-            username: "packetferret"
+            username: "ansible"
             ssh_keyfile: "/root/.ssh/id_rsa.pub"
             port: 22
 
@@ -87,5 +89,5 @@
           state: present
           provider:
             host: "{{ ansible_host }}"
-            username: "packetferret"
+            username: "ansible"
             ssh_keyfile: "/root/.ssh/id_rsa.pub"
