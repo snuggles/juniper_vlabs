@@ -124,7 +124,7 @@ routing-instances {
                 rsvp mtu-signaling;
             }
 {% endif %}
-{% if instance.protocols.mpls.options.no_cspf == 'True' %}
+{% if instance.protocols.mpls.options.no_cspf is defined and instance.protocols.mpls.options.no_cspf == 'True' %}
             no-cspf;
 {% endif %}
 {% endif %}
@@ -135,7 +135,7 @@ routing-instances {
 {% if lsp.bandwidth is defined %}
                 bandwidth {{ lsp.bandwidth }};
 {% endif %}
-{% if lsp.no_cspf == 'True' %}
+{% if lsp.no_cspf is defined and lsp.no_cspf == 'True' %}
                 no-cspf;
 {% endif %}
 {% if lsp.path is defined %}
