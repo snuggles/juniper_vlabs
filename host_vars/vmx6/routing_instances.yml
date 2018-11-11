@@ -6,11 +6,11 @@ routing_instance:
     route_distinguisher: "192.168.255.6:1"
     vrf_target: "target:65000:1"
     protocols:
-      lldp:
-        options:
-          - port-id-subtype interface-name
-        interface:
-          - all
+      # lldp:
+      #   options:
+      #     - port-id-subtype interface-name
+      #   interface:
+      #     - all
       ospf:
         traffic_engineering: True
         export: REDISTRIBUTE-DIRECT
