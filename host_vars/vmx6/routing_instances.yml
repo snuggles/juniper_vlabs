@@ -34,12 +34,12 @@ routing_instance:
       #     - iface: xe-0/0/3.0
       #     - iface: xe-0/0/4.0
       #     - iface: lo0.0
-      rsvp:
-        # options:
-        #   -
-        interface:
-          - iface: xe-0/0/3.0
-          - iface: xe-0/0/4.0
+      # rsvp:
+      #   # options:
+      #   #   -
+      #   interface:
+      #     - iface: xe-0/0/3.0
+      #     - iface: xe-0/0/4.0
       # bgp:
       #   group:
       #     - name: vLabs_iBGP
