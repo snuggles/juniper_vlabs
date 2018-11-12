@@ -4,3 +4,423 @@ vmx3
 vmx4
 vmx5
 vmx6
+
+
+ansible@vmx1> show dynamic-tunnels database 
+Table: inet.3
+
+Destination-network: 192.168.255.0/24
+Tunnel to: 192.168.255.2/32
+  Reference count: 2
+  Next-hop type: rsvp-te
+      192.168.255.2:dt-rsvp-juniper_vlabs
+Tunnel to: 192.168.255.3/32
+  Reference count: 2
+  Next-hop type: rsvp-te
+      192.168.255.3:dt-rsvp-juniper_vlabs
+Tunnel to: 192.168.255.4/32
+  Reference count: 2
+  Next-hop type: rsvp-te
+      192.168.255.4:dt-rsvp-juniper_vlabs
+Tunnel to: 192.168.255.5/32
+  Reference count: 2
+  Next-hop type: rsvp-te
+      192.168.255.5:dt-rsvp-juniper_vlabs
+
+ansible@vmx1> show route table inet.3 
+
+inet.3: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+192.168.255.0/24   *[Tunnel/305] 00:03:15
+                      Tunnel
+192.168.255.2/32   *[RSVP/7/3] 00:02:36, metric 1
+                    > to 10.1.2.2 via xe-0/0/0.0, label-switched-path 192.168.255.2:dt-rsvp-juniper_vlabs
+192.168.255.3/32   *[RSVP/7/3] 00:02:45, metric 1
+                    > to 10.1.3.3 via xe-0/0/2.0, label-switched-path 192.168.255.3:dt-rsvp-juniper_vlabs
+192.168.255.4/32   *[RSVP/7/3] 00:02:50, metric 1
+                    > to 10.1.4.4 via xe-0/0/1.0, label-switched-path 192.168.255.4:dt-rsvp-juniper_vlabs
+192.168.255.5/32   *[RSVP/7/3] 00:02:55, metric 1
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+                   
+vansible@vmx1> show route table mpls.0    
+
+mpls.0: 20 destinations, 20 routes (20 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+0                  *[MPLS/0] 00:03:54, metric 1
+                      to table inet.0
+0(S=0)             *[MPLS/0] 00:03:54, metric 1
+                      to table mpls.0
+1                  *[MPLS/0] 00:03:54, metric 1
+                      Receive
+2                  *[MPLS/0] 00:03:54, metric 1
+                      to table inet6.0
+2(S=0)             *[MPLS/0] 00:03:54, metric 1
+                      to table mpls.0
+13                 *[MPLS/0] 00:03:54, metric 1
+                      Receive
+262157             *[VPLS/7] 00:03:04
+                    > via lsi.1048581 (master), Pop      
+262158             *[VPLS/7] 00:03:04
+                    > via lsi.1048580 (master), Pop      
+262160             *[VPLS/7] 00:03:02
+                    > via lsi.1048582 (master), Pop      
+262161             *[VPLS/7] 00:02:47
+                    > via lsi.1048583 (master), Pop      
+299824             *[RSVP/7/1] 00:03:32, metric 1
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+299824(S=0)        *[RSVP/7/1] 00:03:32, metric 1
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+299840             *[RSVP/7/1] 00:03:31, metric 1
+                    > to 10.1.4.4 via xe-0/0/1.0, label-switched-path 192.168.255.4:dt-rsvp-juniper_vlabs
+299840(S=0)        *[RSVP/7/1] 00:03:31, metric 1
+                    > to 10.1.4.4 via xe-0/0/1.0, label-switched-path 192.168.255.4:dt-rsvp-juniper_vlabs
+299856             *[RSVP/7/1] 00:03:18, metric 1
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+299856(S=0)        *[RSVP/7/1] 00:03:18, metric 1
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+lsi.1048580        *[VPLS/7] 00:03:04, metric2 1
+                    > to 10.1.2.2 via xe-0/0/0.0, label-switched-path 192.168.255.2:dt-rsvp-juniper_vlabs
+lsi.1048581        *[VPLS/7] 00:03:04, metric2 1
+                    > to 10.1.3.3 via xe-0/0/2.0, label-switched-path 192.168.255.3:dt-rsvp-juniper_vlabs
+lsi.1048582        *[VPLS/7] 00:03:02, metric2 1
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+lsi.1048583        *[VPLS/7] 00:02:47, metric2 1
+                    > to 10.1.4.4 via xe-0/0/1.0, label-switched-path 192.168.255.4:dt-rsvp-juniper_vlabs
+ansible@vmx1> show rsvp session    
+Ingress RSVP: 4 sessions
+To              From            State   Rt Style Labelin Labelout LSPname 
+192.168.255.2   192.168.255.1   Up       0  1 FF       -        3 192.168.255.2:dt-rsvp-juniper_vlabs
+192.168.255.3   192.168.255.1   Up       0  1 FF       -        3 192.168.255.3:dt-rsvp-juniper_vlabs
+192.168.255.4   192.168.255.1   Up       0  1 FF       -        3 192.168.255.4:dt-rsvp-juniper_vlabs
+192.168.255.5   192.168.255.1   Up       0  1 FF       -        3 192.168.255.5:dt-rsvp-juniper_vlabs
+Total 4 displayed, Up 4, Down 0
+
+Egress RSVP: 4 sessions
+To              From            State   Rt Style Labelin Labelout LSPname 
+192.168.255.1   192.168.255.5   Up       0  1 FF       3        - 192.168.255.1:dt-rsvp-juniper_vlabs
+192.168.255.1   192.168.255.3   Up       0  1 FF       3        - 192.168.255.1:dt-rsvp-juniper_vlabs
+192.168.255.1   192.168.255.4   Up       0  1 FF       3        - 192.168.255.1:dt-rsvp-juniper_vlabs
+192.168.255.1   192.168.255.2   Up       0  1 FF       3        - 192.168.255.1:dt-rsvp-juniper_vlabs
+Total 4 displayed, Up 4, Down 0
+
+Transit RSVP: 3 sessions
+To              From            State   Rt Style Labelin Labelout LSPname 
+192.168.255.4   192.168.255.5   Up       0  1 FF  299840        3 192.168.255.4:dt-rsvp-juniper_vlabs
+192.168.255.5   192.168.255.4   Up       0  1 FF  299824        3 192.168.255.5:dt-rsvp-juniper_vlabs
+192.168.255.5   192.168.255.2   Up       0  1 FF  299856        3 192.168.255.5:dt-rsvp-juniper_vlabs
+Total 3 displayed, Up 3, Down 0
+
+ansible@vmx1> show rsvp session detail 
+Ingress RSVP: 4 sessions
+
+192.168.255.2
+  From: 192.168.255.1, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.2:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  LSPtype: Dynamic Configured
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: -, Label out: 3
+  Time left:    -, Since: Sun Nov 11 17:59:12 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 27593 protocol 0
+  PATH rcvfrom: localclient 
+  Adspec: sent MTU 1500
+  Path MTU: received 1500
+  PATH sentto: 10.1.2.2 (xe-0/0/0.0) 1 pkts
+  RESV rcvfrom: 10.1.2.2 (xe-0/0/0.0) 1 pkts, Entropy label: Yes
+  Explct route: 10.1.2.2 
+  Record route: <self> 10.1.2.2  
+
+192.168.255.3
+  From: 192.168.255.1, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.3:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  LSPtype: Dynamic Configured
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: -, Label out: 3
+  Time left:    -, Since: Sun Nov 11 17:58:57 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 55266 protocol 0
+  PATH rcvfrom: localclient 
+  Adspec: sent MTU 1500
+  Path MTU: received 1500
+  PATH sentto: 10.1.3.3 (xe-0/0/2.0) 3 pkts
+  RESV rcvfrom: 10.1.3.3 (xe-0/0/2.0) 2 pkts, Entropy label: Yes
+  Explct route: 10.1.3.3 
+  Record route: <self> 10.1.3.3  
+
+192.168.255.4
+  From: 192.168.255.1, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.4:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  LSPtype: Dynamic Configured
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: -, Label out: 3
+  Time left:    -, Since: Sun Nov 11 17:58:58 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 52756 protocol 0
+  PATH rcvfrom: localclient 
+  Adspec: sent MTU 1500
+  Path MTU: received 1500
+  PATH sentto: 10.1.4.4 (xe-0/0/1.0) 2 pkts
+  RESV rcvfrom: 10.1.4.4 (xe-0/0/1.0) 2 pkts, Entropy label: Yes
+  Explct route: 10.1.4.4 
+  Record route: <self> 10.1.4.4  
+
+192.168.255.5
+  From: 192.168.255.1, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.5:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  LSPtype: Dynamic Configured
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: -, Label out: 3
+  Time left:    -, Since: Sun Nov 11 17:58:53 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 31550 protocol 0
+  PATH rcvfrom: localclient 
+  Adspec: sent MTU 1500
+  Path MTU: received 1500
+  PATH sentto: 10.1.5.5 (xe-0/0/3.0) 2 pkts
+  RESV rcvfrom: 10.1.5.5 (xe-0/0/3.0) 2 pkts, Entropy label: Yes
+  Explct route: 10.1.5.5 
+  Record route: <self> 10.1.5.5  
+Total 4 displayed, Up 4, Down 0
+
+Egress RSVP: 4 sessions
+
+192.168.255.1
+  From: 192.168.255.5, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.1:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: -
+  Resv style: 1 FF, Label in: 3, Label out: -
+  Time left: 6034, Since: Sun Nov 11 17:58:53 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 7033 protocol 0
+  PATH rcvfrom: 10.1.5.5 (xe-0/0/3.0) 1 pkts
+  Adspec: received MTU 1500 
+  PATH sentto: localclient
+  RESV rcvfrom: localclient , Entropy label: Yes
+  Record route: 10.1.5.5 <self>  
+
+192.168.255.1                           
+  From: 192.168.255.3, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.1:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: -
+  Resv style: 1 FF, Label in: 3, Label out: -
+  Time left: 6079, Since: Sun Nov 11 17:58:53 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 11053 protocol 0
+  PATH rcvfrom: 10.1.3.3 (xe-0/0/2.0) 3 pkts
+  Adspec: received MTU 1500 
+  PATH sentto: localclient
+  RESV rcvfrom: localclient , Entropy label: Yes
+  Record route: 10.1.3.3 <self>  
+
+192.168.255.1
+  From: 192.168.255.4, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.1:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: -
+  Resv style: 1 FF, Label in: 3, Label out: -
+  Time left: 6083, Since: Sun Nov 11 17:58:58 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 52756 protocol 0
+  PATH rcvfrom: 10.1.4.4 (xe-0/0/1.0) 2 pkts
+  Adspec: received MTU 1500 
+  PATH sentto: localclient
+  RESV rcvfrom: localclient , Entropy label: Yes
+  Record route: 10.1.4.4 <self>  
+
+192.168.255.1
+  From: 192.168.255.2, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.1:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: -
+  Resv style: 1 FF, Label in: 3, Label out: -
+  Time left: 6052, Since: Sun Nov 11 17:59:12 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 54445 protocol 0
+  PATH rcvfrom: 10.1.2.2 (xe-0/0/0.0) 1 pkts
+  Adspec: received MTU 1500 
+  PATH sentto: localclient
+  RESV rcvfrom: localclient , Entropy label: Yes
+  Record route: 10.1.2.2 <self>  
+Total 4 displayed, Up 4, Down 0
+
+Transit RSVP: 3 sessions                
+
+192.168.255.4
+  From: 192.168.255.5, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.4:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: 299840, Label out: 3
+  Time left: 6036, Since: Sun Nov 11 17:58:56 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 36747 protocol 0
+  PATH rcvfrom: 10.1.5.5 (xe-0/0/3.0) 1 pkts
+  Adspec: received MTU 1500 sent MTU 1500
+  PATH sentto: 10.1.4.4 (xe-0/0/1.0) 2 pkts
+  RESV rcvfrom: 10.1.4.4 (xe-0/0/1.0) 2 pkts, Entropy label: Yes
+  Explct route: 10.1.4.4 
+  Record route: 10.1.5.5 <self> 10.1.4.4  
+
+192.168.255.5
+  From: 192.168.255.4, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.5:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: 299824, Label out: 3
+  Time left: 6081, Since: Sun Nov 11 17:58:55 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 9223 protocol 0
+  PATH rcvfrom: 10.1.4.4 (xe-0/0/1.0) 2 pkts
+  Adspec: received MTU 1500 sent MTU 1500
+  PATH sentto: 10.1.5.5 (xe-0/0/3.0) 2 pkts
+  RESV rcvfrom: 10.1.5.5 (xe-0/0/3.0) 2 pkts, Entropy label: Yes
+  Explct route: 10.1.5.5 
+  Record route: 10.1.4.4 <self> 10.1.5.5  
+
+192.168.255.5
+  From: 192.168.255.2, LSPstate: Up, ActiveRoute: 0
+  LSPname: 192.168.255.5:dt-rsvp-juniper_vlabs, LSPpath: Primary
+  Suggested label received: -, Suggested label sent: -
+  Recovery label received: -, Recovery label sent: 3
+  Resv style: 1 FF, Label in: 299856, Label out: 3
+  Time left: 6049, Since: Sun Nov 11 17:59:09 2018
+  Tspec: rate 0bps size 0bps peak Infbps m 20 M 9192
+  Port number: sender 1 receiver 41502 protocol 0
+  PATH rcvfrom: 10.1.2.2 (xe-0/0/0.0) 2 pkts
+  Adspec: received MTU 1500 sent MTU 1500
+  PATH sentto: 10.1.5.5 (xe-0/0/3.0) 1 pkts
+  RESV rcvfrom: 10.1.5.5 (xe-0/0/3.0) 1 pkts, Entropy label: Yes
+  Explct route: 10.1.5.5 
+  Record route: 10.1.2.2 <self> 10.1.5.5  
+Total 3 displayed, Up 3, Down 0
+
+ansible@vmx1> 
+
+ansible@vmx1> show route table PE1.l2vpn.0 
+
+PE1.l2vpn.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+192.168.255.1:1:5:1/96                
+                   *[BGP/170] 00:05:16, localpref 100, from 192.168.255.3
+                      AS path: I, validation-state: unverified
+                    > to 10.1.3.3 via xe-0/0/2.0, label-switched-path 192.168.255.3:dt-rsvp-juniper_vlabs
+192.168.255.1:1:5:9/96                
+                   *[BGP/170] 00:04:59, localpref 100, from 192.168.255.3
+                      AS path: I, validation-state: unverified
+                    > to 10.1.3.3 via xe-0/0/2.0, label-switched-path 192.168.255.3:dt-rsvp-juniper_vlabs
+192.168.255.1:1:6:1/96                
+                   *[BGP/170] 00:05:16, localpref 100, from 192.168.255.2
+                      AS path: I, validation-state: unverified
+                    > to 10.1.2.2 via xe-0/0/0.0, label-switched-path 192.168.255.2:dt-rsvp-juniper_vlabs
+192.168.255.1:1:6:9/96                
+                   *[BGP/170] 00:05:00, localpref 100, from 192.168.255.2
+                      AS path: I, validation-state: unverified
+                    > to 10.1.2.2 via xe-0/0/0.0, label-switched-path 192.168.255.2:dt-rsvp-juniper_vlabs
+192.168.255.1:1:7:1/96                
+                   *[L2VPN/170/-101] 00:05:16, metric2 1
+                      Indirect
+192.168.255.1:1:7:9/96                
+                   *[L2VPN/170/-101] 00:04:59, metric2 1
+                      Indirect
+192.168.255.1:1:8:1/96                
+                   *[BGP/170] 00:05:14, localpref 100, from 192.168.255.5
+                      AS path: I, validation-state: unverified
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+192.168.255.1:1:8:9/96                
+                   *[BGP/170] 00:05:16, localpref 100, from 192.168.255.5
+                      AS path: I, validation-state: unverified
+                    > to 10.1.5.5 via xe-0/0/3.0, label-switched-path 192.168.255.5:dt-rsvp-juniper_vlabs
+192.168.255.1:1:9:1/96                
+                   *[BGP/170] 00:05:02, localpref 100, from 192.168.255.4
+                      AS path: I, validation-state: unverified
+                    > to 10.1.4.4 via xe-0/0/1.0, label-switched-path 192.168.255.4:dt-rsvp-juniper_vlabs
+192.168.255.1:1:9:9/96                
+                   *[BGP/170] 00:05:04, localpref 100, from 192.168.255.4
+                      AS path: I, validation-state: unverified
+                    > to 10.1.4.4 via xe-0/0/1.0, label-switched-path 192.168.255.4:dt-rsvp-juniper_vlabs
+
+ansible@vmx1> show vpls connections    
+Layer-2 VPN connections:
+
+Legend for connection status (St)   
+EI -- encapsulation invalid      NC -- interface encapsulation not CCC/TCC/VPLS
+EM -- encapsulation mismatch     WE -- interface and instance encaps not same
+VC-Dn -- Virtual circuit down    NP -- interface hardware not present 
+CM -- control-word mismatch      -> -- only outbound connection is up
+CN -- circuit not provisioned    <- -- only inbound connection is up
+OR -- out of range               Up -- operational
+OL -- no outgoing label          Dn -- down                      
+LD -- local site signaled down   CF -- call admission control failure      
+RD -- remote site signaled down  SC -- local and remote site ID collision
+LN -- local site not designated  LM -- local site ID not minimum designated
+RN -- remote site not designated RM -- remote site ID not minimum designated
+XX -- unknown connection status  IL -- no incoming label
+MM -- MTU mismatch               MI -- Mesh-Group ID not available
+BK -- Backup connection	         ST -- Standby connection
+PF -- Profile parse failure      PB -- Profile busy
+RS -- remote site standby	 SN -- Static Neighbor
+LB -- Local site not best-site   RB -- Remote site not best-site
+VM -- VLAN ID mismatch           HS -- Hot-standby Connection
+
+Legend for interface status 
+Up -- operational           
+Dn -- down
+
+Instance: PE1
+Edge protection: Not-Primary
+  Local site: CE1 (7)
+    connection-site           Type  St     Time last up          # Up trans
+    5                         rmt   Up     Nov 11 17:59:24 2018           1
+      Remote PE: 192.168.255.3, Negotiated control-word: No
+      Incoming label: 262157, Outgoing label: 262159
+      Local interface: lsi.1048581, Status: Up, Encapsulation: VPLS
+        Description: Intf - vpls PE1 local site 7 remote site 5
+      Flow Label Transmit: No, Flow Label Receive: No
+    6                         rmt   Up     Nov 11 17:59:24 2018           1
+      Remote PE: 192.168.255.2, Negotiated control-word: No
+      Incoming label: 262158, Outgoing label: 262159
+      Local interface: lsi.1048580, Status: Up, Encapsulation: VPLS
+        Description: Intf - vpls PE1 local site 7 remote site 6
+      Flow Label Transmit: No, Flow Label Receive: No
+    8                         rmt   Up     Nov 11 17:59:25 2018           1
+      Remote PE: 192.168.255.5, Negotiated control-word: No
+      Incoming label: 262160, Outgoing label: 262167
+      Local interface: lsi.1048582, Status: Up, Encapsulation: VPLS
+        Description: Intf - vpls PE1 local site 7 remote site 8
+      Flow Label Transmit: No, Flow Label Receive: No
+    9                         rmt   Up     Nov 11 17:59:40 2018           1
+      Remote PE: 192.168.255.4, Negotiated control-word: No
+      Incoming label: 262161, Outgoing label: 262167
+      Local interface: lsi.1048583, Status: Up, Encapsulation: VPLS
+        Description: Intf - vpls PE1 local site 7 remote site 9
+      Flow Label Transmit: No, Flow Label Receive: No
+
+ansible@vmx1> show bgp summary 
+Groups: 1 Peers: 5 Down peers: 1
+Table          Tot Paths  Act Paths Suppressed    History Damp State    Pending
+bgp.l2vpn.0          
+                       8          8          0          0          0          0
+Peer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped...
+192.168.255.2       6553600         45         45       0       0        6:02 Establ
+  bgp.l2vpn.0: 2/2/2/0
+  PE1.l2vpn.0: 2/2/2/0
+192.168.255.3       6553600         48         47       0       0        6:23 Establ
+  bgp.l2vpn.0: 2/2/2/0
+  PE1.l2vpn.0: 2/2/2/0
+192.168.255.4       6553600         52         46       0       0        6:16 Establ
+  bgp.l2vpn.0: 2/2/2/0
+  PE1.l2vpn.0: 2/2/2/0
+192.168.255.5       6553600         48         47       0       0        6:23 Establ
+  bgp.l2vpn.0: 2/2/2/0
+  PE1.l2vpn.0: 2/2/2/0
+192.168.255.6       6553600          0          0       0       0        6:41 Connect
+
