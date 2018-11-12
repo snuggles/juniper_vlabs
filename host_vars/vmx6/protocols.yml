@@ -1,4 +1,4 @@
-# protocols:
+protocols:
   lldp:
     options:
       - port-id-subtype interface-name
